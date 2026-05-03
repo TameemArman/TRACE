@@ -609,8 +609,10 @@ Markers to find:
 {marker_list}
 Report text:
 {pdf_text[:4000]}
-Return ONLY valid JSON. Keys = marker names, values = numeric values only.
-Only include markers present in the report. No units. No explanation.
+Return ONLY valid JSON. Keys must match exactly from the marker list above. Values = numeric only.
+Only include markers you can clearly find in the report text. No units. No explanation.
+Be flexible with name matching — if report says "Haemoglobin" match it to "Hemoglobin (g/dL)".
+If report says "S. TSH" match it to "TSH (mIU/L)". Use best judgment.
 Example: {{"Hemoglobin (g/dL)": 14.5, "TSH (mIU/L)": 2.3}}"""
     try:
         client = Groq(api_key=st.secrets["GROQ_API_KEY"])
