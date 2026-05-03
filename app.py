@@ -521,6 +521,92 @@ st.markdown(f"""
     ::-webkit-scrollbar {{ width: 2px; }}
     ::-webkit-scrollbar-track {{ background: #05050f; }}
     ::-webkit-scrollbar-thumb {{ background: rgba(245,166,35,0.25); border-radius: 2px; }}
+
+    @media (max-width: 768px) {{
+        .main .block-container {{
+            padding: 1rem 1rem !important;
+        }}
+        .navbar {{
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 0.8rem 0 1.5rem 0;
+        }}
+        .nav-brand {{
+            font-size: 1.1rem !important;
+            letter-spacing: 4px !important;
+        }}
+        .landing-title {{
+            font-size: 2.2rem !important;
+            letter-spacing: 6px !important;
+        }}
+        .landing-subtitle {{
+            font-size: 0.95rem !important;
+        }}
+        .feature-table {{
+            max-width: 100% !important;
+        }}
+        .feature-row {{
+            flex-direction: column;
+            gap: 0.2rem;
+            padding: 0.7rem 0;
+        }}
+        .feature-desc {{
+            text-align: left !important;
+            font-size: 0.78rem !important;
+        }}
+        .glass-card {{
+            padding: 1.2rem !important;
+        }}
+        .glow-card {{
+            padding: 1.2rem !important;
+        }}
+        .marker-card {{
+            padding: 1rem !important;
+        }}
+        .ai-story-container {{
+            padding: 1.2rem !important;
+        }}
+        .ai-story-text {{
+            font-size: 0.92rem !important;
+            line-height: 1.7 !important;
+        }}
+        .score-number {{
+            font-size: 2.5rem !important;
+        }}
+        .analytics-number {{
+            font-size: 1.3rem !important;
+        }}
+        .stat-number {{
+            font-size: 1.5rem !important;
+        }}
+        .landing-card {{
+            padding: 1.2rem !important;
+        }}
+        .landing-card-symbol {{
+            font-size: 1.2rem !important;
+        }}
+        .onboarding-wrap {{
+            padding: 1.5rem 1rem !important;
+        }}
+        .feedback-section {{
+            padding-top: 1.5rem !important;
+        }}
+        .panel-header {{
+            font-size: 0.65rem !important;
+            letter-spacing: 3px !important;
+        }}
+        .marker-name {{
+            font-size: 0.72rem !important;
+        }}
+        .section-label {{
+            font-size: 0.6rem !important;
+        }}
+        .footer {{
+            padding: 2rem 0 1rem 0 !important;
+            margin-top: 2rem !important;
+        }}
+    }}
 </style>
 """, unsafe_allow_html=True)
 
