@@ -12,7 +12,7 @@ import json
 st.set_page_config(
     page_title="Trace — Biomarker Timeline",
     page_icon="logo.png",
-    layout="wide"
+    layout="centered"
 )
 
 def get_base64_image(image_path):
