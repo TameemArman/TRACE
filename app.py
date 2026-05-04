@@ -77,6 +77,11 @@ st.markdown("""
 <style>
     * { font-family: 'Inter', sans-serif !important; }
     .stApp { background: #f0f4f8 !important; }
+    html, body, [data-testid="stAppViewContainer"] { background: #f0f4f8 !important; }
+    [data-testid="stExpander"] { background: white !important; border: 1px solid #E2E8F0 !important; border-radius: 12px !important; }
+    [data-testid="stExpander"] summary { background: white !important; color: #0F172A !important; font-weight: 700 !important; }
+    [data-testid="stExpander"] > div { background: white !important; }
+    .streamlit-expanderHeader { background: white !important; color: #0F172A !important; border-radius: 12px !important; }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
@@ -978,7 +983,7 @@ with tab1:
             pr = profiles_df[profiles_df["Name"]==selected_profile].iloc[0]
             gender = pr["Gender"]
             age = calculate_age(pr["DOB"])
-            conditions = pr.get("Conditions","None")
+            conditions = pr.get("Conditions","None") if pd.notna(pr.get("Conditions")) else "None"
             diet = pr.get("Diet","Vegetarian")
             blood_group = pr.get("Blood Group","—")
             st.markdown(f"""
