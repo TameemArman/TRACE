@@ -874,7 +874,7 @@ bcol1, bcol2, bcol3 = st.columns([4, 2, 4])
 with bcol2:
     if st.button("Begin Your Timeline →", key="begin_btn"):
         st.session_state["show_app"] = True
-        st.experimental_set_query_params(started="1")
+        st.query_params["started"] = "1"
         st.rerun()
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -1466,3 +1466,4 @@ st.markdown(f"""
     <div class="t-footer-privacy">{icon_shield()} Your data never leaves your device</div>
 </div>
 """, unsafe_allow_html=True)
+            
