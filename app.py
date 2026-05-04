@@ -1047,7 +1047,7 @@ with tab1:
 
             values = {}
             for panel_name, panel_markers in panels.items():
-                with st.expander(f"  {panel_name}", expanded=(panel_name=="Complete Blood Count")):
+                with st.expander(panel_name, expanded=(panel_name=="Complete Blood Count")):
                     c1, c2 = st.columns(2)
                     for i, (marker, mdata) in enumerate(panel_markers.items()):
                         with c1 if i%2==0 else c2:
@@ -1449,4 +1449,3 @@ st.markdown(f"""
     <div class="t-footer-privacy">{icon_shield()} Your data never leaves your device</div>
 </div>
 """, unsafe_allow_html=True)
-            
