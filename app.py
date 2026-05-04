@@ -845,24 +845,31 @@ if not st.session_state["show_app"]:
     """, unsafe_allow_html=True)
 
     st.markdown("""
-<div style="display:flex; justify-content:center; margin:8px 0 24px 0;">
-</div>
-""", unsafe_allow_html=True)
-col1, col2, col3 = st.columns([3, 1, 3])
-with col2:
-    if st.button("Begin →"):
-        st.session_state["show_app"] = True
-        st.rerun()
-st.markdown("""
 <style>
-div[data-testid="column"]:nth-of-type(2) .stButton button {
-    white-space: nowrap;
+.btn-center-wrap {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin: 16px 0 28px 0 !important;
+}
+.btn-center-wrap > div[data-testid="column"] {
+    flex: 0 0 auto !important;
     width: auto !important;
-    padding: 12px 32px !important;
+}
+.btn-center-wrap .stButton button {
+    width: auto !important;
+    padding: 13px 48px !important;
     font-size: 15px !important;
+    font-weight: 700 !important;
 }
 </style>
 """, unsafe_allow_html=True)
+
+bcol1, bcol2, bcol3 = st.columns([4, 2, 4])
+with bcol2:
+    if st.button("Begin Your Timeline →", key="begin_btn"):
+        st.session_state["show_app"] = True
+        st.rerun()
 
 st.markdown("<br>", unsafe_allow_html=True)
 
