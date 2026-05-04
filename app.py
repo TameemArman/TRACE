@@ -798,6 +798,11 @@ if "show_app" not in st.session_state:
 if "extracted_values" not in st.session_state:
     st.session_state["extracted_values"] = {}
 
+params = st.query_params
+if "started" in params:
+    st.session_state["show_app"] = True
+    st.query_params.clear()
+
 logo_img = f'<img src="data:image/png;base64,{logo_base64}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;"/>' if logo_base64 else ""
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -869,6 +874,7 @@ bcol1, bcol2, bcol3 = st.columns([4, 2, 4])
 with bcol2:
     if st.button("Begin Your Timeline →", key="begin_btn"):
         st.session_state["show_app"] = True
+        st.experimental_set_query_params(started="1")
         st.rerun()
 
 st.markdown("<br>", unsafe_allow_html=True)
