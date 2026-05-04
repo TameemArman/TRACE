@@ -73,9 +73,9 @@ MARKER_INFO = {
 }
 
 st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-    * { font-family: 'Nunito', sans-serif !important; }
+    * { font-family: 'Inter', sans-serif !important; }
     .stApp { background: #f0f4f8 !important; }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -844,7 +844,7 @@ if not st.session_state["show_app"]:
     </div>
     """, unsafe_allow_html=True)
 
-    col_a, col_b, col_c = st.columns([2,2,2])
+    col_a, col_b, col_c = st.columns([1,1,1])
     with col_b:
         if st.button("Begin Your Timeline →"):
             st.session_state["show_app"] = True
@@ -1439,3 +1439,4 @@ st.markdown(f"""
     <div class="t-footer-privacy">{icon_shield()} Your data never leaves your device</div>
 </div>
 """, unsafe_allow_html=True)
+            
