@@ -864,10 +864,10 @@ div[data-testid="column"]:nth-of-type(2) .stButton button {
 </style>
 """, unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
-    c1, c2, c3 = st.columns(3)
-    with c1:
+c1, c2, c3 = st.columns(3)
+with c1:
         st.markdown(f"""
         <div class="t-feature-card">
             <div class="t-feature-icon" style="background:#EFF6FF;">{icon_timeline()}</div>
@@ -875,7 +875,7 @@ div[data-testid="column"]:nth-of-type(2) .stButton button {
             <div class="t-feature-text">Upload your lab PDF or enter values. Your biomarker timeline builds automatically over months and years.</div>
         </div>
         """, unsafe_allow_html=True)
-    with c2:
+with c2:
         st.markdown(f"""
         <div class="t-feature-card">
             <div class="t-feature-icon" style="background:#F0FDF4;">{icon_chart()}</div>
@@ -883,7 +883,7 @@ div[data-testid="column"]:nth-of-type(2) .stButton button {
             <div class="t-feature-text">Watch your markers change before they cross danger thresholds. Catch what doctors miss between appointments.</div>
         </div>
         """, unsafe_allow_html=True)
-    with c3:
+with c3:
         st.markdown(f"""
         <div class="t-feature-card">
             <div class="t-feature-icon" style="background:#F5F3FF;">{icon_brain()}</div>
@@ -892,9 +892,9 @@ div[data-testid="column"]:nth-of-type(2) .stButton button {
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
-    st.markdown(f"""
+st.markdown(f"""
     <div class="t-diabetes-card">
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
             {icon_drop()}
@@ -922,7 +922,7 @@ div[data-testid="column"]:nth-of-type(2) .stButton button {
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"""
+st.markdown(f"""
     <div class="t-footer">
         <div class="t-logo-wrap" style="margin:0 auto; width:44px; height:44px;">{logo_img}</div>
         <div class="t-footer-brand">Trace</div>
@@ -930,7 +930,7 @@ div[data-testid="column"]:nth-of-type(2) .stButton button {
         <div class="t-footer-privacy">{icon_shield()} Your data never leaves your device</div>
     </div>
     """, unsafe_allow_html=True)
-    st.stop()
+st.stop()
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MAIN APP
