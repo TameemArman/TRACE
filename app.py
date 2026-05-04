@@ -78,10 +78,15 @@ st.markdown("""
     * { font-family: 'Inter', sans-serif !important; }
     .stApp { background: #f0f4f8 !important; }
     html, body, [data-testid="stAppViewContainer"] { background: #f0f4f8 !important; }
-    [data-testid="stExpander"] { background: white !important; border: 1px solid #E2E8F0 !important; border-radius: 12px !important; }
-    [data-testid="stExpander"] summary { background: white !important; color: #0F172A !important; font-weight: 700 !important; }
+    [data-testid="stExpander"] { background: white !important; border: 1px solid #E2E8F0 !important; border-radius: 12px !important; overflow: hidden !important; }
+    [data-testid="stExpander"] details { background: white !important; }
+    [data-testid="stExpander"] summary { background: white !important; color: #0F172A !important; font-weight: 700 !important; list-style: none !important; }
+    [data-testid="stExpander"] summary::-webkit-details-marker { display: none !important; }
     [data-testid="stExpander"] > div { background: white !important; }
+    [data-testid="stExpanderDetails"] { background: white !important; }
     .streamlit-expanderHeader { background: white !important; color: #0F172A !important; border-radius: 12px !important; }
+    .streamlit-expanderHeader p { color: #0F172A !important; font-weight: 700 !important; }
+    section[data-testid="stSidebar"] { background: white !important; }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
@@ -1444,3 +1449,4 @@ st.markdown(f"""
     <div class="t-footer-privacy">{icon_shield()} Your data never leaves your device</div>
 </div>
 """, unsafe_allow_html=True)
+            
