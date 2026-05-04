@@ -848,7 +848,7 @@ if not st.session_state["show_app"]:
 <div style="display:flex; justify-content:center; margin:8px 0 24px 0;">
 </div>
 """, unsafe_allow_html=True)
-col1, col2, col3 = st.columns([2, 1, 2])
+col1, col2, col3 = st.columns([3, 1, 3])
 with col2:
     if st.button("Begin →"):
         st.session_state["show_app"] = True
