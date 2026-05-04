@@ -73,9 +73,9 @@ MARKER_INFO = {
 }
 
 st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-    * { font-family: 'Inter', sans-serif !important; }
+    * { font-family: 'Nunito', sans-serif !important; }
     .stApp { background: #f0f4f8 !important; }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -798,11 +798,6 @@ if "show_app" not in st.session_state:
 if "extracted_values" not in st.session_state:
     st.session_state["extracted_values"] = {}
 
-params = st.query_params
-if "started" in params and not st.session_state.get("show_app"):
-    st.session_state["show_app"] = True
-    st.query_params.clear()
-
 logo_img = f'<img src="data:image/png;base64,{logo_base64}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;"/>' if logo_base64 else ""
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -849,37 +844,16 @@ if not st.session_state["show_app"]:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-<style>
-.btn-center-wrap {
-    display: flex !important;
-    justify-content: center !important;
-    width: 100% !important;
-    margin: 16px 0 28px 0 !important;
-}
-.btn-center-wrap > div[data-testid="column"] {
-    flex: 0 0 auto !important;
-    width: auto !important;
-}
-.btn-center-wrap .stButton button {
-    width: auto !important;
-    padding: 13px 48px !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-}
-</style>
-""", unsafe_allow_html=True)
+    col_a, col_b, col_c = st.columns([2,2,2])
+    with col_b:
+        if st.button("Begin Your Timeline →"):
+            st.session_state["show_app"] = True
+            st.rerun()
 
-bcol1, bcol2, bcol3 = st.columns([4, 2, 4])
-with bcol2:
-    if st.button("Begin Your Timeline →", key="begin_btn"):
-        st.session_state["show_app"] = True
-        st.rerun()
+    st.markdown("<br>", unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
-
-c1, c2, c3 = st.columns(3)
-with c1:
+    c1, c2, c3 = st.columns(3)
+    with c1:
         st.markdown(f"""
         <div class="t-feature-card">
             <div class="t-feature-icon" style="background:#EFF6FF;">{icon_timeline()}</div>
@@ -887,7 +861,7 @@ with c1:
             <div class="t-feature-text">Upload your lab PDF or enter values. Your biomarker timeline builds automatically over months and years.</div>
         </div>
         """, unsafe_allow_html=True)
-with c2:
+    with c2:
         st.markdown(f"""
         <div class="t-feature-card">
             <div class="t-feature-icon" style="background:#F0FDF4;">{icon_chart()}</div>
@@ -895,7 +869,7 @@ with c2:
             <div class="t-feature-text">Watch your markers change before they cross danger thresholds. Catch what doctors miss between appointments.</div>
         </div>
         """, unsafe_allow_html=True)
-with c3:
+    with c3:
         st.markdown(f"""
         <div class="t-feature-card">
             <div class="t-feature-icon" style="background:#F5F3FF;">{icon_brain()}</div>
@@ -904,9 +878,9 @@ with c3:
         </div>
         """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
-st.markdown(f"""
+    st.markdown(f"""
     <div class="t-diabetes-card">
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
             {icon_drop()}
@@ -934,7 +908,7 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown(f"""
+    st.markdown(f"""
     <div class="t-footer">
         <div class="t-logo-wrap" style="margin:0 auto; width:44px; height:44px;">{logo_img}</div>
         <div class="t-footer-brand">Trace</div>
@@ -942,7 +916,7 @@ st.markdown(f"""
         <div class="t-footer-privacy">{icon_shield()} Your data never leaves your device</div>
     </div>
     """, unsafe_allow_html=True)
-st.stop()
+    st.stop()
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MAIN APP
