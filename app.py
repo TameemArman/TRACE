@@ -739,13 +739,15 @@ with tab1:
 
             for panel_name, panel_markers in panels.items():
                 pc = panel_colors.get(panel_name, "#0EA5E9")
-                with st.expander(panel_name, expanded=(panel_name=="Complete Blood Count")):
-                    c1, c2 = st.columns(2)
-                    for i, (marker, mdata) in enumerate(panel_markers.items()):
-                        with c1 if i%2==0 else c2:
-                            dv = float(extracted_vals.get(marker, 0.0))
-                            dv = min(max(dv, mdata["min"]), mdata["max"])
-                            values[marker] = st.number_input(marker, min_value=mdata["min"], max_value=mdata["max"], value=dv, help=f"{MARKER_INFO.get(marker,'')} | Normal: {mdata['low']} – {mdata['high']}")
+                st.markdown(f'<div class="t-panel-head"><div style="width:8px;height:8px;border-radius:50%;background:{pc};flex-shrink:0;"></div>{panel_name}</div>', unsafe_allow_html=True)
+                st.markdown('<div class="t-card" style="margin-bottom:12px;">', unsafe_allow_html=True)
+                c1, c2 = st.columns(2)
+                for i, (marker, mdata) in enumerate(panel_markers.items()):
+                    with c1 if i%2==0 else c2:
+                        dv = float(extracted_vals.get(marker, 0.0))
+                        dv = min(max(dv, mdata["min"]), mdata["max"])
+                        values[marker] = st.number_input(marker, min_value=mdata["min"], max_value=mdata["max"], value=dv, help=f"{MARKER_INFO.get(marker,'')} | Normal: {mdata['low']} – {mdata['high']}")
+                st.markdown('</div>', unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("Save Test →"):
