@@ -7,7 +7,7 @@ from groq import Groq
 import base64
 import fitz
 import json
-
+import streamlit.components.v1 as components
 st.set_page_config(
     page_title="Trace — Biomarker Timeline",
     page_icon="logo.png",
@@ -348,7 +348,15 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
+st.markdown("""
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M7MXDH3YV1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-M7MXDH3YV1');
+</script>
+""", unsafe_allow_html=True)
 def icon_heartbeat():
     return """<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12h3l3-9 4 18 3-9h5" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>"""
 
