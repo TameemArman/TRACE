@@ -701,7 +701,7 @@ with tab1:
             st.markdown('<div class="t-card" style="margin-top:12px;">', unsafe_allow_html=True)
             st.markdown('<div class="t-section">Upload PDF Report</div>', unsafe_allow_html=True)
             st.markdown('<div style="font-size:12px;color:#94A3B8;margin-bottom:12px;font-weight:500;">AI reads your lab report and fills values automatically.</div>', unsafe_allow_html=True)
-            uploaded_pdf = st.file_uploader("", type=["pdf"], label_visibility="collapsed")
+            uploaded_pdf = st.file_uploader("Upload PDF", type=["pdf"], label_visibility="visible")
             if uploaded_pdf:
                 if st.button("Extract from PDF →"):
                     with st.spinner("Reading your report..."):
