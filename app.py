@@ -14,7 +14,18 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+import streamlit.components.v1 as components
 
+components.html("""
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M7MXDH3YV1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M7MXDH3YV1');
+</script>
+""", height=0)
 def get_base64_image(image_path):
     try:
         with open(image_path, "rb") as img_file:
