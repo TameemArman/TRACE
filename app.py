@@ -659,23 +659,6 @@ if not st.session_state["show_app"]:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"""
-    <div class="t-diabetes-card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">{icon_drop()}<div class="t-diabetes-title">Diabetes Intelligence — Built In</div></div>
-        <div class="t-diabetes-sub">India has 101 million diabetics and 136 million pre-diabetics. Most don't know their HbA1c is drifting until it's too late. Trace gives diabetes families a dedicated intelligence layer — tracking glucose trends, detecting insulin resistance, and predicting trajectory before your doctor's next appointment.</div>
-        <div class="t-diabetes-grid">
-            <div class="t-diabetes-stat"><div class="t-diabetes-num">101M</div><div class="t-diabetes-label">Diabetics in India</div></div>
-            <div class="t-diabetes-stat"><div class="t-diabetes-num">136M</div><div class="t-diabetes-label">Pre-Diabetic</div></div>
-            <div class="t-diabetes-stat"><div class="t-diabetes-num">0</div><div class="t-diabetes-label">Tools tracking drift</div></div>
-        </div>
-    </div>
-    <div class="t-footer">
-        <div class="t-logo-wrap" style="margin:0 auto;width:44px;height:44px;">{logo_img}</div>
-        <div class="t-footer-brand">Trace</div>
-        <div class="t-footer-sub">Your blood tests are telling a story. This is where you read it.</div>
-        <div class="t-footer-privacy">{icon_shield()} Your data never leaves your device</div>
-    </div>
-    """, unsafe_allow_html=True)
     st.stop()
 
 # ══ MAIN APP ══════════════════════════════════════════════════════════════════
