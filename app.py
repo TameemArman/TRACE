@@ -647,6 +647,18 @@ if not st.session_state["show_app"]:
         st.markdown(f'<div class="t-feature-card"><div class="t-feature-icon" style="background:#F5F3FF;">{icon_brain()}</div><div class="t-feature-title">Understand Everything</div><div class="t-feature-text">AI reads your entire biomarker history and explains it in plain language. No medical degree needed.</div></div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="t-card" style="text-align:center; padding:28px 20px; margin-bottom:16px;">
+        <div style="font-size:13px; font-weight:700; color:#0F172A; margin-bottom:4px;">Built by a first-year Biotechnology student from Hyderabad</div>
+        <div style="font-size:15px; font-weight:800; color:#0F172A; margin-bottom:12px;">Mohammad Tameem Arman</div>
+        <a href="mailto:tameemarman1@gmail.com" style="
+            display:inline-block; background:#0EA5E9; color:white;
+            padding:9px 22px; border-radius:10px; text-decoration:none;
+            font-size:13px; font-weight:700;
+        ">tameemarman1@gmail.com</a>
+    </div>
+    """, unsafe_allow_html=True)
+
     st.markdown(f"""
     <div class="t-diabetes-card">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">{icon_drop()}<div class="t-diabetes-title">Diabetes Intelligence — Built In</div></div>
