@@ -664,21 +664,6 @@ if not st.session_state["show_app"]:
         <div style="margin-top:16px;font-size:11px;color:#CBD5E1;font-weight:500;">© 2026 Trace. Built in Hyderabad, India.</div>
     </div>
     """, unsafe_allow_html=True)
-    st.markdown(f"""
-    <div class="t-footer">
-        <div class="t-logo-wrap" style="margin:0 auto;width:44px;height:44px;">{logo_img}</div>
-        <div class="t-footer-brand">Trace</div>
-        <div class="t-footer-sub">Your blood tests are telling a story. This is where you read it.</div>
-        <div class="t-footer-privacy">{icon_shield()} Your data never leaves your device</div>
-        <div style="margin-top:20px;padding-top:16px;border-top:1px solid #E2E8F0;">
-            <div style="font-size:11px;font-weight:800;color:#94A3B8;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Contact</div>
-            <div style="font-size:13px;font-weight:700;color:#0F172A;margin-bottom:4px;">Mohammad Tameem Arman</div>
-            <div style="font-size:12px;color:#64748B;margin-bottom:8px;font-weight:500;">Founder · Biotechnology Student · Hyderabad</div>
-            <a href="mailto:tameemarman1@gmail.com" style="display:inline-block;background:#0EA5E9;color:white;padding:7px 18px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:700;">tameemarman1@gmail.com</a>
-        </div>
-        <div style="margin-top:16px;font-size:11px;color:#CBD5E1;font-weight:500;">© 2026 Trace. Built in Hyderabad, India.</div>
-    </div>
-    """, unsafe_allow_html=True)
     st.stop()
 
 # ══ MAIN APP ══════════════════════════════════════════════════════════════════
@@ -1017,6 +1002,12 @@ st.markdown(f"""
     <div class="t-footer-brand">Trace</div>
     <div class="t-footer-sub">Your blood tests are telling a story. This is where you read it.</div>
     <div class="t-footer-privacy">{icon_shield()} Your data never leaves your device</div>
-
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #E2E8F0;">
+        <div style="font-size:11px;font-weight:800;color:#94A3B8;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Contact</div>
+        <div style="font-size:13px;font-weight:700;color:#0F172A;margin-bottom:4px;">Mohammad Tameem Arman</div>
+        <div style="font-size:12px;color:#64748B;margin-bottom:8px;font-weight:500;">Founder · Biotechnology Student · Hyderabad</div>
+        <a href="mailto:tameemarman1@gmail.com" style="display:inline-block;background:#0EA5E9;color:white;padding:7px 18px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:700;">tameemarman1@gmail.com</a>
+    </div>
+    <div style="margin-top:16px;font-size:11px;color:#CBD5E1;font-weight:500;">© 2026 Trace. Built in Hyderabad, India.</div>
 </div>
 """, unsafe_allow_html=True)
