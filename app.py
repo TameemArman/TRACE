@@ -142,9 +142,22 @@ st.markdown("""
         border-radius: 12px !important;
     }
     [data-testid="stFileUploader"] * { color: #64748B !important; }
-    [data-testid="stFileUploadDropzone"] {
-        background: white !important;
+    [data-testid="stFileUploadDropzone"] { background: white !important; }
+    [data-testid="stFileUploaderDropzoneInstructions"] { display: none !important; }
+    [data-testid="stFileUploader"] button {
+        background: #0EA5E9 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        padding: 6px 16px !important;
+        width: auto !important;
+        box-shadow: none !important;
+        font-size: 13px !important;
     }
+    [data-testid="stFileUploader"] button span { display: none !important; }
+    [data-testid="stFileUploader"] button::after { content: "Upload PDF" !important; }
+    [data-testid="stFileUploader"] small { color: #94A3B8 !important; font-size: 11px !important; }
 
     /* NAV */
     .t-nav {
