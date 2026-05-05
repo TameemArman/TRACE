@@ -781,7 +781,7 @@ with tab2:
     else:
         col_sel, _ = st.columns([2, 4])
         with col_sel:
-            selected_name = st.selectbox("", profiles_df["Name"].tolist(), label_visibility="collapsed")
+            selected_name = st.selectbox("Select profile", profiles_df["Name"].tolist(), label_visibility="collapsed", key="timeline_profile")
 
         pr = profiles_df[profiles_df["Name"]==selected_name].iloc[0]
         gender = clean(pr.get("Gender"), "Male")
