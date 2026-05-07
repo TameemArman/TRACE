@@ -15,7 +15,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 import streamlit.components.v1 as components
+import threading
+import time
+import requests
 
+def keep_alive():
+    while True:
+        time.sleep(600)
+        try:
+            requests.get("https://gettrace.streamlit.app")
+        except:
+            pass
+
+threading.Thread(target=keep_alive, daemon=True).start()
 components.html("""
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-M7MXDH3YV1"></script>
 <script>
