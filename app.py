@@ -556,15 +556,18 @@ def bar_color(fc):
     return "#22C55E" if fc=="normal" else "#EF4444" if fc=="danger" else "#F59E0B"
 
 # ── SESSION ───────────────────────────────────────────────────────────────────
-if "show_app" not in st.session_state: st.session_state["show_app"] = False
 if "extracted_values" not in st.session_state: st.session_state["extracted_values"] = {}
-if "user_id" not in st.session_state: st.session_state["user_id"] = str(uuid.uuid4())
 
-# Store UUID in browser cookie via query params
+# Handle UUID from URL
 uid_param = st.query_params.get("uid", None)
-if uid_param and uid_param != st.session_state["user_id"]:
+if uid_param:
     st.session_state["user_id"] = uid_param
-elif not uid_param:
+    st.session_state["show_app"] = True
+else:
+    if "user_id" not in st.session_state:
+        st.session_state["user_id"] = str(uuid.uuid4())
+    if "show_app" not in st.session_state:
+        st.session_state["show_app"] = False
     st.query_params["uid"] = st.session_state["user_id"]
 
 logo_img = f'<img src="data:image/png;base64,{logo_base64}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;"/>' if logo_base64 else ""
