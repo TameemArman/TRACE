@@ -43,6 +43,17 @@ def get_or_create_user_id():
         st.session_state["user_id"] = str(uuid.uuid4())
     return st.session_state["user_id"]
 
+def sync_user_id_from_browser():
+    components.html("""
+        <script>
+            var uid = localStorage.getItem('trace_user_id');
+            if (!uid) {
+                uid = crypto.randomUUID();
+                localStorage.setItem('trace_user_id', uid);
+            }
+        </script>
+    """, height=0)
+
 def load_profiles_db():
     try:
         uid = get_or_create_user_id()
@@ -548,6 +559,13 @@ def bar_color(fc):
 if "show_app" not in st.session_state: st.session_state["show_app"] = False
 if "extracted_values" not in st.session_state: st.session_state["extracted_values"] = {}
 if "user_id" not in st.session_state: st.session_state["user_id"] = str(uuid.uuid4())
+
+# Store UUID in browser cookie via query params
+uid_param = st.query_params.get("uid", None)
+if uid_param and uid_param != st.session_state["user_id"]:
+    st.session_state["user_id"] = uid_param
+elif not uid_param:
+    st.query_params["uid"] = st.session_state["user_id"]
 
 logo_img = f'<img src="data:image/png;base64,{logo_base64}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;"/>' if logo_base64 else ""
 
