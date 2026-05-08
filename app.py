@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-import os
 from datetime import date, datetime
 from groq import Groq
 import base64
@@ -38,37 +37,40 @@ def get_supabase():
 
 supabase = get_supabase()
 
-def get_or_create_user_id():
-    if "user_id" not in st.session_state:
-        st.session_state["user_id"] = str(uuid.uuid4())
-    return st.session_state["user_id"]
-
-def sync_user_id_from_browser():
-    components.html("""
-        <script>
-            var uid = localStorage.getItem('trace_user_id');
-            if (!uid) {
-                uid = crypto.randomUUID();
-                localStorage.setItem('trace_user_id', uid);
-            }
-        </script>
-    """, height=0)
-
-def load_profiles_db():
+def sign_in_with_google():
     try:
-        uid = get_or_create_user_id()
-        res = supabase.table("profiles").select("*").eq("user_id", uid).execute()
+        res = supabase.auth.sign_in_with_oauth({
+            "provider": "google",
+            "options": {
+                "redirect_to": "https://gettrace.streamlit.app"
+            }
+        })
+        return res.url
+    except:
+        return None
+
+def get_current_user():
+    try:
+        session = supabase.auth.get_session()
+        if session and session.user:
+            return session.user
+        return None
+    except:
+        return None
+
+def load_profiles_db(user_id):
+    try:
+        res = supabase.table("profiles").select("*").eq("user_id", user_id).execute()
         if res.data:
             return pd.DataFrame(res.data)
         return pd.DataFrame(columns=["name","dob","gender","blood_group","conditions","diet"])
     except:
         return pd.DataFrame(columns=["name","dob","gender","blood_group","conditions","diet"])
 
-def save_profile_db(name, dob, gender, blood_group, conditions, diet):
+def save_profile_db(user_id, name, dob, gender, blood_group, conditions, diet):
     try:
-        uid = get_or_create_user_id()
         supabase.table("profiles").insert({
-            "user_id": uid,
+            "user_id": user_id,
             "name": name,
             "dob": str(dob),
             "gender": gender,
@@ -80,10 +82,9 @@ def save_profile_db(name, dob, gender, blood_group, conditions, diet):
     except:
         return False
 
-def load_tests_db(profile_name):
+def load_tests_db(user_id, profile_name):
     try:
-        uid = get_or_create_user_id()
-        res = supabase.table("tests").select("*").eq("user_id", uid).eq("profile_name", profile_name).execute()
+        res = supabase.table("tests").select("*").eq("user_id", user_id).eq("profile_name", profile_name).execute()
         if res.data:
             rows = []
             for r in res.data:
@@ -96,11 +97,10 @@ def load_tests_db(profile_name):
     except:
         return pd.DataFrame()
 
-def save_test_db(profile_name, test_date, gender, age, values):
+def save_test_db(user_id, profile_name, test_date, gender, age, values):
     try:
-        uid = get_or_create_user_id()
         supabase.table("tests").insert({
-            "user_id": uid,
+            "user_id": user_id,
             "profile_name": profile_name,
             "test_date": str(test_date),
             "gender": gender,
@@ -111,11 +111,10 @@ def save_test_db(profile_name, test_date, gender, age, values):
     except:
         return False
 
-def save_feedback_db(profile_name, rating, message, email):
+def save_feedback_db(user_id, profile_name, rating, message, email):
     try:
-        uid = get_or_create_user_id()
         supabase.table("feedback").insert({
-            "user_id": uid,
+            "user_id": user_id,
             "profile_name": profile_name,
             "rating": rating,
             "message": message,
@@ -317,6 +316,9 @@ st.markdown("""
     .t-footer-brand { font-size: 20px; font-weight: 900; color: #0F172A !important; margin-top: 12px; }
     .t-footer-sub { font-size: 12px; color: #94A3B8 !important; margin-top: 4px; font-weight: 500; }
     .t-footer-privacy { font-size: 11px; color: #22C55E !important; margin-top: 6px; font-weight: 700; }
+    .t-login-card { background: white; border-radius: 20px; border: 1px solid #E2E8F0; padding: 40px 32px; text-align: center; max-width: 440px; margin: 40px auto; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .t-google-btn { display: inline-flex; align-items: center; gap: 10px; background: white; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 12px 24px; text-decoration: none; font-size: 14px; font-weight: 700; color: #0F172A !important; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; transition: all 0.2s; }
+    .t-google-btn:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
     hr { border-color: #F1F5F9 !important; }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: #F8FAFC; }
@@ -353,6 +355,8 @@ def icon_drop():
     return """<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3C12 3 5 10.5 5 15a7 7 0 0014 0c0-4.5-7-12-7-12z" stroke="#EF4444" stroke-width="2.5" stroke-linejoin="round"/></svg>"""
 def icon_timeline():
     return """<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="6" cy="12" r="2" fill="#0EA5E9"/><circle cx="12" cy="7" r="2" fill="#0EA5E9"/><circle cx="18" cy="10" r="2" fill="#0EA5E9"/><path d="M6 12l6-5 6 3" stroke="#0EA5E9" stroke-width="1.5" stroke-linecap="round"/><path d="M3 20h18" stroke="#E2E8F0" stroke-width="1.5" stroke-linecap="round"/></svg>"""
+def icon_google():
+    return """<svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>"""
 
 def get_markers(gender="Male", age=30):
     m = {}
@@ -555,20 +559,20 @@ def bar_pct(value, md):
 def bar_color(fc):
     return "#22C55E" if fc=="normal" else "#EF4444" if fc=="danger" else "#F59E0B"
 
-# ── SESSION ───────────────────────────────────────────────────────────────────
-if "extracted_values" not in st.session_state: st.session_state["extracted_values"] = {}
+# ── SESSION & AUTH ────────────────────────────────────────────────────────────
+if "extracted_values" not in st.session_state:
+    st.session_state["extracted_values"] = {}
+if "user" not in st.session_state:
+    st.session_state["user"] = None
 
-# Handle UUID from URL
-uid_param = st.query_params.get("uid", None)
-if uid_param:
-    st.session_state["user_id"] = uid_param
-    st.session_state["show_app"] = True
-else:
-    if "user_id" not in st.session_state:
-        st.session_state["user_id"] = str(uuid.uuid4())
-    if "show_app" not in st.session_state:
-        st.session_state["show_app"] = False
-    st.query_params["uid"] = st.session_state["user_id"]
+# Check for existing session
+if st.session_state["user"] is None:
+    try:
+        session = supabase.auth.get_session()
+        if session and session.user:
+            st.session_state["user"] = session.user
+    except:
+        pass
 
 logo_img = f'<img src="data:image/png;base64,{logo_base64}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;"/>' if logo_base64 else ""
 
@@ -588,8 +592,12 @@ FOOTER = f"""
 </div>
 """
 
-# ══ LANDING ══════════════════════════════════════════════════════════════════
-if not st.session_state["show_app"]:
+# ── NAV ───────────────────────────────────────────────────────────────────────
+def show_nav(user=None):
+    user_info = ""
+    if user:
+        email = user.email if hasattr(user, 'email') else ""
+        user_info = f'<div style="font-size:12px;font-weight:700;color:#0F172A;">{email}</div>'
     st.markdown(f"""
     <div class="t-nav">
         <div class="t-nav-left">
@@ -597,10 +605,17 @@ if not st.session_state["show_app"]:
             <div><div class="t-nav-brand">Trace</div><div class="t-nav-sub">Biomarker Timeline</div></div>
         </div>
         <div class="t-nav-right">
+            {user_info}
             <div class="t-nav-private">{icon_shield()} Private</div>
             <div class="t-nav-badge">Beta</div>
         </div>
     </div>
+    """, unsafe_allow_html=True)
+
+# ══ LANDING ══════════════════════════════════════════════════════════════════
+if st.session_state["user"] is None:
+    show_nav()
+    st.markdown(f"""
     <div class="t-hero">
         <div class="t-hero-tag">Introducing Trace</div>
         <div class="t-hero-title">Your blood tests are<br><span>telling a story</span></div>
@@ -615,15 +630,25 @@ if not st.session_state["show_app"]:
             <div class="t-pill">Indian Lab Ranges</div>
             <div class="t-pill">Diabetes Intelligence</div>
         </div>
-        <div class="t-hero-privacy">{icon_shield()} Your data never leaves your device</div>
     </div>
     """, unsafe_allow_html=True)
 
-    _, col_mid, _ = st.columns([2, 1, 2])
-    with col_mid:
-        if st.button("Begin Your Timeline →"):
-            st.session_state["show_app"] = True
-            st.rerun()
+    # Login card
+    st.markdown(f"""
+    <div class="t-login-card">
+        <div style="font-size:22px;font-weight:900;color:#0F172A;margin-bottom:8px;">Sign in to Trace</div>
+        <div style="font-size:13px;color:#64748B;font-weight:500;margin-bottom:24px;">Your health data stays private and secure.<br>Sign in once — access from any device.</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_a, col_b, col_c = st.columns([1.5, 1, 1.5])
+    with col_b:
+        if st.button("Continue with Google →"):
+            url = sign_in_with_google()
+            if url:
+                st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
+            else:
+                st.error("Could not connect to Google. Please try again.")
 
     st.markdown("<br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
@@ -650,20 +675,12 @@ if not st.session_state["show_app"]:
     st.stop()
 
 # ══ MAIN APP ══════════════════════════════════════════════════════════════════
-st.markdown(f"""
-<div class="t-nav">
-    <div class="t-nav-left">
-        <div class="t-logo-wrap">{logo_img}</div>
-        <div><div class="t-nav-brand">Trace</div><div class="t-nav-sub">Biomarker Timeline</div></div>
-    </div>
-    <div class="t-nav-right">
-        <div class="t-nav-private">Private</div>
-        <div class="t-nav-badge">Beta</div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+user = st.session_state["user"]
+user_id = user.id
 
-profiles_df = load_profiles_db()
+show_nav(user)
+
+profiles_df = load_profiles_db(user_id)
 tab1, tab2, tab3 = st.tabs(["  Log Test  ", "  My Timeline  ", "  Profiles  "])
 
 # ══ TAB 1 — LOG TEST ══════════════════════════════════════════════════════════
@@ -736,7 +753,7 @@ with tab1:
 
             extracted_vals = st.session_state.get("extracted_values", {})
             if extracted_vals:
-                st.markdown(f'<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:12px 16px;margin-bottom:12px;"><div style="font-size:13px;font-weight:700;color:#166534;">{len(extracted_vals)} values extracted — review and save below</div></div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:12px 16px;margin-bottom:12px;"><div style="font-size:13px;font-weight:700;color:#166634;">{len(extracted_vals)} values extracted — review and save below</div></div>', unsafe_allow_html=True)
 
             values = {}
             panel_colors = {"Complete Blood Count":"#EF4444","Thyroid Panel":"#7C3AED","Diabetes Panel":"#EA580C","Lipid Profile":"#0EA5E9","Liver Function":"#16A34A","Kidney Function":"#0891B2","Vitamins & Minerals":"#D97706","Hormones":"#DB2777","Inflammation":"#DC2626"}
@@ -756,7 +773,7 @@ with tab1:
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("Save Test →"):
                 numeric_values = {k: float(v) for k, v in values.items() if v != 0.0}
-                if save_test_db(selected_profile, test_date, gender, age, numeric_values):
+                if save_test_db(user_id, selected_profile, test_date, gender, age, numeric_values):
                     st.session_state["extracted_values"] = {}
                     st.success(f"Test saved for {selected_profile} on {test_date}.")
                     st.balloons()
@@ -781,7 +798,7 @@ with tab2:
         diet = clean(pr.get("diet"), "Vegetarian")
         blood_group = clean(pr.get("blood_group"), "—")
         markers = get_markers(gender, age)
-        person_df = load_tests_db(selected_name)
+        person_df = load_tests_db(user_id, selected_name)
 
         if person_df.empty:
             st.markdown('<div class="t-onboard"><div class="t-onboard-sub">No tests logged yet. Go to Log Test to add your first blood test.</div></div>', unsafe_allow_html=True)
@@ -913,7 +930,7 @@ with tab2:
                     if not feedback_text.strip():
                         st.error("Please write something before sending.")
                     else:
-                        save_feedback_db(selected_name, rating, feedback_text, feedback_email)
+                        save_feedback_db(user_id, selected_name, rating, feedback_text, feedback_email)
                         st.success("Received. Thank you so much.")
 
 # ══ TAB 3 — PROFILES ══════════════════════════════════════════════════════════
@@ -943,7 +960,7 @@ with tab3:
             elif "name" in profiles_df.columns and new_name in profiles_df["name"].tolist():
                 st.warning("A profile with this name already exists.")
             else:
-                if save_profile_db(new_name, new_dob, new_gender, new_blood, ", ".join(new_conditions), new_diet):
+                if save_profile_db(user_id, new_name, new_dob, new_gender, new_blood, ", ".join(new_conditions), new_diet):
                     st.success(f"Profile created for {new_name}.")
                     st.rerun()
                 else:
@@ -951,29 +968,9 @@ with tab3:
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col_existing:
-        st.markdown('<div class="t-section">Your Access Code</div>', unsafe_allow_html=True)
-        user_id = get_or_create_user_id()
-        st.markdown(f"""
-        <div class="t-card" style="margin-bottom:16px;">
-            <div style="font-size:13px;font-weight:800;color:#0F172A;margin-bottom:6px;">Save this code to restore your data</div>
-            <div style="font-size:11px;color:#64748B;font-weight:500;margin-bottom:12px;">If you switch devices or clear your browser, paste this code to get your data back.</div>
-            <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:800;color:#0EA5E9;letter-spacing:1px;word-break:break-all;">{user_id}</div>
-        </div>
-        """, unsafe_allow_html=True)
-        restore_code = st.text_input("", placeholder="Paste your code here to restore data on a new device", label_visibility="collapsed", key="restore_code")
-        col_r, _ = st.columns([1,2])
-        with col_r:
-            if st.button("Restore My Data →"):
-                if restore_code.strip():
-                    st.session_state["user_id"] = restore_code.strip()
-                    st.success("Data restored. Your profiles will appear below.")
-                    st.rerun()
-                else:
-                    st.error("Please paste your access code first.")
-
         st.markdown('<div class="t-section">Your Profiles</div>', unsafe_allow_html=True)
         if profiles_df.empty:
-            st.markdown('<div class="t-card" style="text-align:center;padding:32px;"><div style="width:48px;height:48px;background:#F1F5F9;border-radius:14px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;"><div style="width:20px;height:20px;background:#CBD5E1;border-radius:50%;"></div></div><div style="font-size:14px;font-weight:800;color:#0F172A;margin-bottom:4px;">No profiles yet</div><div style="font-size:12px;color:#94A3B8;font-weight:500;">Create your first profile to get started</div></div>', unsafe_allow_html=True)
+            st.markdown('<div class="t-card" style="text-align:center;padding:32px;"><div style="font-size:14px;font-weight:800;color:#0F172A;margin-bottom:4px;">No profiles yet</div><div style="font-size:12px;color:#94A3B8;font-weight:500;">Create your first profile to get started</div></div>', unsafe_allow_html=True)
         else:
             for _, row in profiles_df.iterrows():
                 a = calculate_age(row.get("dob"))
@@ -981,13 +978,24 @@ with tab3:
                 diab_badge = '<span style="background:#FFF7ED;color:#EA580C;border:1px solid #FED7AA;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;margin-left:6px;">Diabetes</span>' if "Diabetes" in conds else ""
                 st.markdown(f"""
                 <div class="t-profile-item">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                        <div>
-                            <div class="t-profile-name">{row.get('name','')}{diab_badge}</div>
-                            <div class="t-profile-info">{clean(row.get('gender'))} · {a} years · {clean(row.get('blood_group'),'—')}<br>{clean(row.get('diet'),'—')} · {conds}</div>
-                        </div>
-                    </div>
+                    <div class="t-profile-name">{row.get('name','')}{diab_badge}</div>
+                    <div class="t-profile-info">{clean(row.get('gender'))} · {a} years · {clean(row.get('blood_group'),'—')}<br>{clean(row.get('diet'),'—')} · {conds}</div>
                 </div>
                 """, unsafe_allow_html=True)
+
+        st.markdown('<div class="t-section">Account</div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="t-card">
+            <div style="font-size:13px;font-weight:700;color:#0F172A;margin-bottom:4px;">Signed in as</div>
+            <div style="font-size:12px;color:#64748B;font-weight:500;">{user.email if hasattr(user, 'email') else 'Google Account'}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Sign Out →"):
+            try:
+                supabase.auth.sign_out()
+            except:
+                pass
+            st.session_state["user"] = None
+            st.rerun()
 
 st.markdown(FOOTER, unsafe_allow_html=True)
