@@ -930,6 +930,26 @@ with tab3:
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col_existing:
+        st.markdown('<div class="t-section">Your Access Code</div>', unsafe_allow_html=True)
+        user_id = get_or_create_user_id()
+        st.markdown(f"""
+        <div class="t-card" style="margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:800;color:#0F172A;margin-bottom:6px;">Save this code to restore your data</div>
+            <div style="font-size:11px;color:#64748B;font-weight:500;margin-bottom:12px;">If you switch devices or clear your browser, paste this code to get your data back.</div>
+            <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:800;color:#0EA5E9;letter-spacing:1px;word-break:break-all;">{user_id}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        restore_code = st.text_input("", placeholder="Paste your code here to restore data on a new device", label_visibility="collapsed", key="restore_code")
+        col_r, _ = st.columns([1,2])
+        with col_r:
+            if st.button("Restore My Data →"):
+                if restore_code.strip():
+                    st.session_state["user_id"] = restore_code.strip()
+                    st.success("Data restored. Your profiles will appear below.")
+                    st.rerun()
+                else:
+                    st.error("Please paste your access code first.")
+
         st.markdown('<div class="t-section">Your Profiles</div>', unsafe_allow_html=True)
         if profiles_df.empty:
             st.markdown('<div class="t-card" style="text-align:center;padding:32px;"><div style="width:48px;height:48px;background:#F1F5F9;border-radius:14px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;"><div style="width:20px;height:20px;background:#CBD5E1;border-radius:50%;"></div></div><div style="font-size:14px;font-weight:800;color:#0F172A;margin-bottom:4px;">No profiles yet</div><div style="font-size:12px;color:#94A3B8;font-weight:500;">Create your first profile to get started</div></div>', unsafe_allow_html=True)
