@@ -604,7 +604,7 @@ def show_nav(user=None):
         </div>
         <div class="t-nav-right">
             {user_info}
-            <div class="t-nav-private" style="color:#22C55E;font-size:11px;font-weight:800;">&#x2713; Private</div>
+            <div style="color:#22C55E;font-size:11px;font-weight:800;">&#10003; Private</div>
             <div class="t-nav-badge">Beta</div>
         </div>
     </div>
@@ -639,41 +639,43 @@ if st.session_state["user"] is None:
     </div>
     """, unsafe_allow_html=True)
 
-    col_a, col_b, col_c = st.columns([1.5, 1, 1.5])
+    col_a, col_b, col_c = st.columns([1, 1, 1])
     with col_b:
-        if st.button("Continue with Google →"):
+        st.markdown("""
+        <style>
+        div[data-testid="column"]:nth-child(2) .stButton button {
+            width: 100% !important;
+        }
+        div[data-testid="column"]:nth-child(2) .stTextInput input {
+            width: 100% !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        if st.button("Continue with Google →", key="google_btn"):
             url = sign_in_with_google()
             if url:
                 st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
             else:
-                st.error("Could not connect to Google. Please try again.")
+                st.error("Could not connect to Google.")
 
-    st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown('<div style="text-align:center;font-size:12px;color:#94A3B8;font-weight:600;margin:12px 0;">— or sign in with email —</div>', unsafe_allow_html=True)
 
-    st.markdown("""
-    <div style="text-align:center;font-size:12px;color:#94A3B8;font-weight:600;margin-bottom:16px;">— or sign in with email —</div>
-    """, unsafe_allow_html=True)
-
-    col_x, col_y, col_z = st.columns([1.5, 1, 1.5])
-    with col_y:
         email_input = st.text_input("", placeholder="your@email.com", label_visibility="collapsed", key="email_login")
-        if st.button("Send Magic Link →"):
+
+        if st.button("Send Magic Link →", key="email_btn"):
             if email_input.strip():
                 try:
                     supabase.auth.sign_in_with_otp({"email": email_input.strip()})
-                    st.success("Magic link sent to your email. Click it to sign in.")
+                    st.success("Magic link sent. Check your email.")
                 except:
                     st.error("Could not send email. Please try again.")
             else:
                 st.error("Please enter your email.")
 
-    st.markdown("""
-    <div style="text-align:center;font-size:12px;color:#94A3B8;font-weight:600;margin:16px 0;">— or continue as guest —</div>
-    """, unsafe_allow_html=True)
+        st.markdown('<div style="text-align:center;font-size:12px;color:#94A3B8;font-weight:600;margin:12px 0;">— or —</div>', unsafe_allow_html=True)
 
-    col_p, col_q, col_r = st.columns([1.5, 1, 1.5])
-    with col_q:
-        if st.button("Continue as Guest →"):
+        if st.button("Continue as Guest →", key="guest_btn"):
             guest_id = str(uuid.uuid4())
             class GuestUser:
                 def __init__(self, gid):
