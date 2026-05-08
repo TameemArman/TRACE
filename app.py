@@ -594,10 +594,8 @@ FOOTER = f"""
 
 # ── NAV ───────────────────────────────────────────────────────────────────────
 def show_nav(user=None):
-    user_info = ""
-    if user:
-        email = user.email if hasattr(user, 'email') else ""
-        user_info = f'<div style="font-size:12px;font-weight:700;color:#0F172A;">{email}</div>'
+    user_email = user.email if user and hasattr(user, 'email') else ""
+    user_info = f'<div style="font-size:12px;font-weight:700;color:#0F172A;margin-right:4px;">{user_email}</div>' if user_email else ""
     st.markdown(f"""
     <div class="t-nav">
         <div class="t-nav-left">
@@ -606,7 +604,7 @@ def show_nav(user=None):
         </div>
         <div class="t-nav-right">
             {user_info}
-            <div class="t-nav-private">{icon_shield()} Private</div>
+            <div class="t-nav-private" style="color:#22C55E;font-size:11px;font-weight:800;">&#x2713; Private</div>
             <div class="t-nav-badge">Beta</div>
         </div>
     </div>
@@ -649,6 +647,40 @@ if st.session_state["user"] is None:
                 st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
             else:
                 st.error("Could not connect to Google. Please try again.")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="text-align:center;font-size:12px;color:#94A3B8;font-weight:600;margin-bottom:16px;">— or sign in with email —</div>
+    """, unsafe_allow_html=True)
+
+    col_x, col_y, col_z = st.columns([1.5, 1, 1.5])
+    with col_y:
+        email_input = st.text_input("", placeholder="your@email.com", label_visibility="collapsed", key="email_login")
+        if st.button("Send Magic Link →"):
+            if email_input.strip():
+                try:
+                    supabase.auth.sign_in_with_otp({"email": email_input.strip()})
+                    st.success("Magic link sent to your email. Click it to sign in.")
+                except:
+                    st.error("Could not send email. Please try again.")
+            else:
+                st.error("Please enter your email.")
+
+    st.markdown("""
+    <div style="text-align:center;font-size:12px;color:#94A3B8;font-weight:600;margin:16px 0;">— or continue as guest —</div>
+    """, unsafe_allow_html=True)
+
+    col_p, col_q, col_r = st.columns([1.5, 1, 1.5])
+    with col_q:
+        if st.button("Continue as Guest →"):
+            guest_id = str(uuid.uuid4())
+            class GuestUser:
+                def __init__(self, gid):
+                    self.id = gid
+                    self.email = f"guest_{gid[:8]}"
+            st.session_state["user"] = GuestUser(guest_id)
+            st.rerun()
 
     st.markdown("<br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
