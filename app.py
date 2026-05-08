@@ -616,19 +616,11 @@ if not st.session_state["show_app"]:
     </div>
     """, unsafe_allow_html=True)
 
-    col_a, col_b, col_c = st.columns([1.5, 1, 1.5])
-    with col_b:
+    _, col_mid, _ = st.columns([2, 1, 2])
+    with col_mid:
         if st.button("Begin Your Timeline →"):
             st.session_state["show_app"] = True
             st.rerun()
-    st.markdown("""
-    <style>
-    div[data-testid="column"]:nth-child(2) .stButton button {
-        display: block;
-        margin: 0 auto;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
