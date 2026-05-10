@@ -565,7 +565,14 @@ if "extracted_values" not in st.session_state:
 if "user" not in st.session_state:
     st.session_state["user"] = None
 
-# Do not auto-restore session — each user must sign in themselves
+# Restore session from Supabase on refresh
+if st.session_state["user"] is None:
+    try:
+        session = supabase.auth.get_session()
+        if session and session.user:
+            st.session_state["user"] = session.user
+    except:
+        pass
 
 logo_img = f'<img src="data:image/png;base64,{logo_base64}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;"/>' if logo_base64 else ""
 
