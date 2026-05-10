@@ -565,7 +565,17 @@ if "extracted_values" not in st.session_state:
 if "user" not in st.session_state:
     st.session_state["user"] = None
 
-# Do not auto-restore — session lives in session_state only
+# Restore session from URL token on refresh
+if st.session_state["user"] is None:
+    token = st.query_params.get("token", None)
+    if token:
+        try:
+            fresh = create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
+            res = fresh.auth.set_session(token, token)
+            if res and res.user:
+                st.session_state["user"] = res.user
+        except:
+            st.query_params.clear()
 
 logo_img = f'<img src="data:image/png;base64,{logo_base64}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;"/>' if logo_base64 else ""
 
@@ -611,6 +621,7 @@ def show_nav(user=None):
                 except:
                     pass
                 st.session_state["user"] = None
+                st.query_params.clear()
                 st.rerun()
 
 # ══ LANDING ══════════════════════════════════════════════════════════════════
@@ -668,6 +679,10 @@ if st.session_state["user"] is None:
                         res = fresh_client.auth.sign_in_with_password({"email": email_input.strip(), "password": pass_input.strip()})
                         if res.user:
                             st.session_state["user"] = res.user
+                            try:
+                                st.query_params["token"] = res.session.access_token
+                            except:
+                                pass
                             st.rerun()
                         else:
                             st.error("Incorrect email or password.")
@@ -685,6 +700,10 @@ if st.session_state["user"] is None:
                             res = supabase.auth.sign_up({"email": email_input.strip(), "password": pass_input.strip()})
                             if res.user:
                                 st.session_state["user"] = res.user
+                                try:
+                                    st.query_params["token"] = res.session.access_token
+                                except:
+                                    pass
                                 st.success("Account created.")
                                 st.rerun()
                             else:
@@ -1051,6 +1070,7 @@ with tab3:
             except:
                 pass
             st.session_state["user"] = None
+            st.query_params.clear()
             st.rerun()
 
 st.markdown(FOOTER, unsafe_allow_html=True)
