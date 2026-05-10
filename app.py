@@ -612,7 +612,18 @@ def show_nav(user=None):
 
 # ══ LANDING ══════════════════════════════════════════════════════════════════
 if st.session_state["user"] is None:
-    show_nav()
+    st.markdown(f"""
+    <div class="t-nav">
+        <div class="t-nav-left">
+            <div class="t-logo-wrap">{logo_img}</div>
+            <div><div class="t-nav-brand">Trace</div><div class="t-nav-sub">Biomarker Timeline</div></div>
+        </div>
+        <div class="t-nav-right">
+            <div style="color:#22C55E;font-size:11px;font-weight:800;">&#10003; Private</div>
+            <div class="t-nav-badge">Beta</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     st.markdown(f"""
     <div class="t-hero">
         <div class="t-hero-tag">Introducing Trace</div>
@@ -631,47 +642,52 @@ if st.session_state["user"] is None:
     </div>
     """, unsafe_allow_html=True)
 
-    # Login card
-    st.markdown(f"""
+    st.markdown("""
     <div class="t-login-card">
         <div style="font-size:22px;font-weight:900;color:#0F172A;margin-bottom:8px;">Sign in to Trace</div>
-        <div style="font-size:13px;color:#64748B;font-weight:500;margin-bottom:24px;">Your health data stays private and secure.<br>Sign in once — access from any device.</div>
+        <div style="font-size:13px;color:#64748B;font-weight:500;margin-bottom:4px;">Your health data stays private and secure.</div>
+        <div style="font-size:13px;color:#64748B;font-weight:500;">Sign in once — access from any device forever.</div>
     </div>
     """, unsafe_allow_html=True)
 
     col_a, col_b, col_c = st.columns([1, 1, 1])
     with col_b:
-        st.markdown("""
-        <style>
-        div[data-testid="column"]:nth-child(2) .stButton button {
-            width: 100% !important;
-        }
-        div[data-testid="column"]:nth-child(2) .stTextInput input {
-            width: 100% !important;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+        auth_mode = st.radio("", ["Sign In", "Create Account"], horizontal=True, label_visibility="collapsed", key="auth_mode")
+        email_input = st.text_input("", placeholder="your@email.com", label_visibility="collapsed", key="auth_email")
+        pass_input = st.text_input("", placeholder="password (min 6 characters)", type="password", label_visibility="collapsed", key="auth_pass")
 
-        if st.button("Continue with Google →", key="google_btn"):
-            url = sign_in_with_google()
-            if url:
-                st.markdown(f'<meta http-equiv="refresh" content="0;url={url}">', unsafe_allow_html=True)
-            else:
-                st.error("Could not connect to Google.")
-
-        st.markdown('<div style="text-align:center;font-size:12px;color:#94A3B8;font-weight:600;margin:12px 0;">— or sign in with email —</div>', unsafe_allow_html=True)
-
-        email_input = st.text_input("", placeholder="your@email.com", label_visibility="collapsed", key="email_login")
-
-        if st.button("Send Magic Link →", key="email_btn"):
-            if email_input.strip():
-                try:
-                    supabase.auth.sign_in_with_otp({"email": email_input.strip()})
-                    st.success("Magic link sent. Check your email.")
-                except:
-                    st.error("Could not send email. Please try again.")
-            else:
-                st.error("Please enter your email.")
+        if auth_mode == "Sign In":
+            if st.button("Sign In →", key="signin_btn"):
+                if email_input.strip() and pass_input.strip():
+                    try:
+                        res = supabase.auth.sign_in_with_password({"email": email_input.strip(), "password": pass_input.strip()})
+                        if res.user:
+                            st.session_state["user"] = res.user
+                            st.rerun()
+                        else:
+                            st.error("Incorrect email or password.")
+                    except:
+                        st.error("Incorrect email or password.")
+                else:
+                    st.error("Please enter your email and password.")
+        else:
+            if st.button("Create Account →", key="signup_btn"):
+                if email_input.strip() and pass_input.strip():
+                    if len(pass_input.strip()) < 6:
+                        st.error("Password must be at least 6 characters.")
+                    else:
+                        try:
+                            res = supabase.auth.sign_up({"email": email_input.strip(), "password": pass_input.strip()})
+                            if res.user:
+                                st.session_state["user"] = res.user
+                                st.success("Account created.")
+                                st.rerun()
+                            else:
+                                st.error("Could not create account.")
+                        except:
+                            st.error("Could not create account. Email may already exist.")
+                else:
+                    st.error("Please enter your email and password.")
 
         st.markdown('<div style="text-align:center;font-size:12px;color:#94A3B8;font-weight:600;margin:12px 0;">— or —</div>', unsafe_allow_html=True)
 
