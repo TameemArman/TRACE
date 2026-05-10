@@ -565,14 +565,7 @@ if "extracted_values" not in st.session_state:
 if "user" not in st.session_state:
     st.session_state["user"] = None
 
-# Check for existing session
-if st.session_state["user"] is None:
-    try:
-        session = supabase.auth.get_session()
-        if session and session.user:
-            st.session_state["user"] = session.user
-    except:
-        pass
+# Do not auto-restore session — each user must sign in themselves
 
 logo_img = f'<img src="data:image/png;base64,{logo_base64}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;"/>' if logo_base64 else ""
 
@@ -609,6 +602,16 @@ def show_nav(user=None):
         </div>
     </div>
     """, unsafe_allow_html=True)
+    if user:
+        col_a, col_b = st.columns([6, 1])
+        with col_b:
+            if st.button("Sign Out", key="nav_signout"):
+                try:
+                    supabase.auth.sign_out()
+                except:
+                    pass
+                st.session_state["user"] = None
+                st.rerun()
 
 # ══ LANDING ══════════════════════════════════════════════════════════════════
 if st.session_state["user"] is None:
