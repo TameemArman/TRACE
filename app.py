@@ -565,14 +565,7 @@ if "extracted_values" not in st.session_state:
 if "user" not in st.session_state:
     st.session_state["user"] = None
 
-# Restore session from Supabase on refresh
-if st.session_state["user"] is None:
-    try:
-        session = supabase.auth.get_session()
-        if session and session.user:
-            st.session_state["user"] = session.user
-    except:
-        pass
+# Do not auto-restore — session lives in session_state only
 
 logo_img = f'<img src="data:image/png;base64,{logo_base64}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;"/>' if logo_base64 else ""
 
@@ -670,13 +663,15 @@ if st.session_state["user"] is None:
             if st.button("Sign In →", key="signin_btn"):
                 if email_input.strip() and pass_input.strip():
                     try:
-                        res = supabase.auth.sign_in_with_password({"email": email_input.strip(), "password": pass_input.strip()})
+                        # Create fresh supabase client for this login
+                        fresh_client = create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
+                        res = fresh_client.auth.sign_in_with_password({"email": email_input.strip(), "password": pass_input.strip()})
                         if res.user:
                             st.session_state["user"] = res.user
                             st.rerun()
                         else:
                             st.error("Incorrect email or password.")
-                    except:
+                    except Exception as e:
                         st.error("Incorrect email or password.")
                 else:
                     st.error("Please enter your email and password.")
