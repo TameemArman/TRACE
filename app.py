@@ -26,6 +26,8 @@ def keep_alive():
         time.sleep(300)
         try:
             requests.get("https://gettrace.streamlit.app", timeout=10)
+            # Also ping Supabase to prevent free tier pause
+            supabase.table("profiles").select("id").limit(1).execute()
         except:
             pass
 threading.Thread(target=keep_alive, daemon=True).start()
